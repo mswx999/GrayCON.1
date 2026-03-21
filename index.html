@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GrayCON — Fast. Private. Borderless.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     LANDING PAGE
+════════════════════════════════════════ -->
+<div id="page-landing" class="page active">
+
+  <nav id="main-nav">
+    <div class="nav-logo" onclick="showPage('landing')">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="logo-text">GrayCON</span>
+    </div>
+    <div class="nav-links">
+      <a onclick="scrollTo('#features')">Features</a>
+      <a onclick="scrollTo('#how')">How it Works</a>
+      <a onclick="scrollTo('#usecases')">Use Cases</a>
+      <a onclick="scrollTo('#tech')">Tech Stack</a>
+    </div>
+    <div class="nav-cta">
+      <button class="btn btn-ghost" onclick="showPage('login')">Log in</button>
+      <button class="btn btn-primary" onclick="showPage('register')">Get Started →</button>
+    </div>
+    <div class="hamburger" id="hamburger" onclick="toggleMobileNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav-header">
+      <div class="nav-logo"><div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><span class="logo-text">GrayCON</span></div>
+      <span class="mobile-nav-close" onclick="toggleMobileNav()">✕</span>
+    </div>
+    <a class="mobile-nav-item" onclick="toggleMobileNav();scrollTo('#features')">Features</a>
+    <a class="mobile-nav-item" onclick="toggleMobileNav();scrollTo('#how')">How it Works</a>
+    <a class="mobile-nav-item" onclick="toggleMobileNav();scrollTo('#usecases')">Use Cases</a>
+    <a class="mobile-nav-item" onclick="toggleMobileNav();scrollTo('#tech')">Tech Stack</a>
+    <div class="mobile-nav-btns">
+      <button class="btn btn-ghost btn-block" onclick="showPage('login')">Log in</button>
+      <button class="btn btn-primary btn-block" onclick="showPage('register')">Get Started →</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-tag">
+      <span class="hero-tag-dot"></span> The Future of Remittance
+    </div>
+    <h1 class="fade-up">Send Money<br><span>Across Borders</span></h1>
+    <p class="hero-sub fade-up-2">Fast. Private. Borderless. Experience seamless fiat-to-fiat transfers powered by next-gen stablecoin infrastructure — 15-minute settlement, bank-grade security.</p>
+    <div class="hero-actions fade-up-3">
+      <button class="btn btn-primary btn-lg" onclick="showPage('register')">Start Sending Now →</button>
+      <button class="btn btn-ghost btn-lg" onclick="showPage('login')">Access Dashboard</button>
+    </div>
+    <div class="stats-row fade-up-4">
+      <div class="stat"><div class="stat-val">~15 min</div><div class="stat-label">Avg. settlement</div></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><div class="stat-val">&lt;1%</div><div class="stat-label">Transfer fee</div></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><div class="stat-val">KYC/AML</div><div class="stat-label">Compliant</div></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><div class="stat-val">USDT</div><div class="stat-label">Stablecoin layer</div></div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span class="tick-item">USD → INR <b>83.42</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">GBP → INR <b>105.20</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">EUR → INR <b>90.10</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">USDT <b>$1.00</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">Avg. fee <b>&lt;1%</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">Settlement <b>~15 min</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">Networks <b>ERC-20 · TRC-20 · BEP-20</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">Partners <b>MoonPay · Unocoin · Tether</b></span><span class="tick-sep">·</span>
+      <!-- duplicate for loop -->
+      <span class="tick-item">USD → INR <b>83.42</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">GBP → INR <b>105.20</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">EUR → INR <b>90.10</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">USDT <b>$1.00</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">Avg. fee <b>&lt;1%</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">Settlement <b>~15 min</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">Networks <b>ERC-20 · TRC-20 · BEP-20</b></span><span class="tick-sep">·</span>
+      <span class="tick-item">Partners <b>MoonPay · Unocoin · Tether</b></span><span class="tick-sep">·</span>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="section-alt">
+    <div class="section-header reveal">
+      <div class="section-tag">How it works</div>
+      <h2 class="section-title">Four steps to global transfer</h2>
+      <p class="section-sub">From fiat deposit to local currency payout — every step secured by blockchain technology.</p>
+    </div>
+    <div class="flow-grid reveal">
+      <div class="flow-card">
+        <div class="flow-num">01</div>
+        <div class="flow-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <h3>Verify Identity</h3>
+        <p>Quick KYC/AML process ensures full regulatory compliance and account security before your first transfer.</p>
+      </div>
+      <div class="flow-card">
+        <div class="flow-num">02</div>
+        <div class="flow-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+        <h3>Fiat Deposit</h3>
+        <p>Deposit USD, GBP, or other fiat currencies. On-ramp partner instantly converts to USDT stablecoin.</p>
+      </div>
+      <div class="flow-card">
+        <div class="flow-num">03</div>
+        <div class="flow-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <h3>Blockchain Transfer</h3>
+        <p>Funds traverse the blockchain network. Transaction hash generated for full transparency and audit trail.</p>
+      </div>
+      <div class="flow-card">
+        <div class="flow-num">04</div>
+        <div class="flow-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <h3>Receive in INR</h3>
+        <p>Off-ramp partner (Unocoin) converts USDT to INR. Recipient receives via UPI or direct bank transfer.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="section-header reveal">
+      <div class="section-tag">Why GrayCON</div>
+      <h2 class="section-title">Built for the borderless economy</h2>
+      <p class="section-sub">Everything you need to move money globally — securely, privately, and fast.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card reveal">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <h3>Lightning Fast</h3>
+        <p>Transfers complete in ~15 minutes on average, powered by stablecoin rails — not slow correspondent banking.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3>Privacy First</h3>
+        <p>Minimal data retention. We collect only what's legally required — your transaction details remain private.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Secure & Compliant</h3>
+        <p>Bank-grade encryption, full KYC/AML compliance, and transaction monitoring for regulatory peace of mind.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <h3>Global Coverage</h3>
+        <p>Send to 50+ countries. Digital bridge across UPI, SEPA, ACH and more via our off-ramp partner network.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <h3>Low Fees</h3>
+        <p>Under 1% total fee — a fraction of traditional services. Full fee breakdown shown before every transfer.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <h3>Live Tracking</h3>
+        <p>Track every transfer in real time with a blockchain transaction hash. Know where your money is at all times.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- USE CASES -->
+  <section id="usecases" class="section-alt">
+    <div class="section-header reveal">
+      <div class="section-tag">Use Cases</div>
+      <h2 class="section-title">Who sends with GrayCON?</h2>
+      <p class="section-sub">From migrant workers to global SMEs — anyone who needs fast, affordable cross-border transfers.</p>
+    </div>
+    <div class="uc-grid">
+      <div class="uc-card reveal">
+        <div class="uc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div>
+          <h3>Migrant Workers</h3>
+          <p>Send earnings home instantly at a fraction of Western Union fees. No 3-day waits, no hidden charges.</p>
+          <span class="uc-tag">Low-cost remittance</span>
+        </div>
+      </div>
+      <div class="uc-card reveal">
+        <div class="uc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <div>
+          <h3>Freelancers &amp; Creators</h3>
+          <p>Get paid from US, UK, or EU clients and receive INR directly via UPI. No Payoneer delays.</p>
+          <span class="uc-tag">Cross-border payouts</span>
+        </div>
+      </div>
+      <div class="uc-card reveal">
+        <div class="uc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <div>
+          <h3>SME Import / Export</h3>
+          <p>Settle international invoices in hours, not days. Lock exchange rates, no FX desk required.</p>
+          <span class="uc-tag">B2B settlements</span>
+        </div>
+      </div>
+      <div class="uc-card reveal">
+        <div class="uc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <div>
+          <h3>Unbanked Population</h3>
+          <p>No traditional bank account needed. Recipients get INR to UPI — true financial inclusion across India.</p>
+          <span class="uc-tag">Financial inclusion</span>
+        </div>
+      </div>
+      <div class="uc-card reveal">
+        <div class="uc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div>
+          <h3>Students Abroad</h3>
+          <p>Parents in India fund tuition and living expenses overseas. Students in UK or Australia receive instantly.</p>
+          <span class="uc-tag">Education payments</span>
+        </div>
+      </div>
+      <div class="uc-card reveal">
+        <div class="uc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div>
+          <h3>Privacy-First Transfers</h3>
+          <p>Minimal data retention, stable value. Transfers routed via stablecoins — zero crypto volatility exposure.</p>
+          <span class="uc-tag">Secure &amp; private</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section id="tech">
+    <div class="section-header reveal">
+      <div class="section-tag">Tech Stack</div>
+      <h2 class="section-title">Built on proven infrastructure</h2>
+      <p class="section-sub">A modern, scalable stack — crypto APIs and SDKs integrated in Phase 2.</p>
+    </div>
+    <div class="tech-grid reveal">
+      <div class="tech-card">
+        <div class="tech-badge">FE</div>
+        <div><h4>Frontend</h4><p>HTML, CSS, JavaScript — responsive &amp; accessible</p></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-badge">BE</div>
+        <div><h4>Backend</h4><p>Node.js + Express — RESTful API architecture</p></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-badge">DB</div>
+        <div><h4>Database</h4><p>Firebase Firestore — real-time NoSQL storage</p></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-badge">🔐</div>
+        <div><h4>Auth</h4><p>Firebase Authentication — email + social login</p></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-badge">ON</div>
+        <div><h4>On-Ramp</h4><p>MoonPay — fiat → USDT conversion (Phase 2)</p></div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-badge">OFF</div>
+        <div><h4>Off-Ramp</h4><p>Unocoin — USDT → INR via UPI/bank (Phase 2)</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section-alt">
+    <div class="section-header reveal">
+      <div class="section-tag">Testimonials</div>
+      <h2 class="section-title">Trusted by early users</h2>
+      <p class="section-sub">Real feedback from our beta community across the globe.</p>
+    </div>
+    <div class="testimonial-grid">
+      <div class="tcard reveal">
+        <div class="stars">★★★★★</div>
+        <p class="tquote">"Sent $500 to my family in Mumbai and it arrived in 12 minutes as ₹41,600. The fee was under $4. Western Union would have taken 2 days and charged $22."</p>
+        <div class="tauthor">
+          <div class="tavatar">RK</div>
+          <div><div class="tname">Rahul Krishnan</div><div class="trole">Software engineer, San Francisco</div></div>
+        </div>
+      </div>
+      <div class="tcard reveal">
+        <div class="stars">★★★★★</div>
+        <p class="tquote">"As a freelancer getting paid from UK clients, I used to lose 3% on Wise. GrayCON cuts that to under 1% and lands in my UPI instantly."</p>
+        <div class="tauthor">
+          <div class="tavatar">PS</div>
+          <div><div class="tname">Priya Sharma</div><div class="trole">UI designer, Bangalore</div></div>
+        </div>
+      </div>
+      <div class="tcard reveal">
+        <div class="stars">★★★★☆</div>
+        <p class="tquote">"Our import business reduced FX costs by over 60%. The blockchain trail is fantastic for audit purposes. Highly recommend GrayCON for B2B use."</p>
+        <div class="tauthor">
+          <div class="tavatar">AM</div>
+          <div><div class="tname">Aditya Mehta</div><div class="trole">Director, Mehta Textiles Ltd.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-inner reveal">
+      <div class="section-tag">Get started today</div>
+      <h2>Start sending in minutes</h2>
+      <p>Join the future of borderless finance. Create your free account today.</p>
+      <button class="btn btn-primary btn-lg" onclick="showPage('register')">Create Free Account →</button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="nav-logo" onclick="showPage('landing')">
+      <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+      <span class="logo-text">GrayCON</span>
+    </div>
+    <div class="footer-links">
+      <a onclick="scrollTo('#features')">Features</a>
+      <a onclick="scrollTo('#how')">How it Works</a>
+      <a onclick="scrollTo('#tech')">Tech Stack</a>
+    </div>
+    <p class="footer-copy">© 2026 GrayCON. Fast. Private. Borderless.</p>
+  </footer>
+
+</div><!-- /page-landing -->
+
+
+<!-- ════════════════════════════════════════
+     LOGIN PAGE
+════════════════════════════════════════ -->
+<div id="page-login" class="page">
+  <div class="auth-page">
+    <div class="auth-box">
+      <div class="auth-logo" onclick="showPage('landing')">
+        <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <span class="logo-text">GrayCON</span>
+      </div>
+      <h2 class="auth-title">Welcome back</h2>
+      <p class="auth-sub">Sign in to your account to access your dashboard</p>
+
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input class="form-input" id="login-email" type="email" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password"/>
+        <div class="form-error" id="login-error">Incorrect email or password. Please try again.</div>
+      </div>
+
+      <button class="auth-btn" id="login-btn" onclick="doLogin()">Sign in</button>
+
+      <div class="auth-divider"><span>or continue with</span></div>
+      <button class="btn-google" onclick="doGoogleLogin()">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+
+      <p class="auth-switch">Don't have an account? <a onclick="showPage('register')">Create one</a></p>
+      <p class="auth-back"><a onclick="showPage('landing')">← Back to home</a></p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     REGISTER PAGE
+════════════════════════════════════════ -->
+<div id="page-register" class="page">
+  <div class="auth-page">
+    <div class="auth-box" style="max-width:480px">
+      <div class="auth-logo" onclick="showPage('landing')">
+        <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <span class="logo-text">GrayCON</span>
+      </div>
+      <div class="step-indicator">
+        <div class="step-dot active" id="sd1"></div>
+        <div class="step-dot" id="sd2"></div>
+        <div class="step-dot" id="sd3"></div>
+      </div>
+
+      <!-- Step 1 -->
+      <div id="reg-step1">
+        <h2 class="auth-title">Create account</h2>
+        <p class="auth-sub">Step 1 of 3 — Account credentials</p>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">First name</label><input class="form-input" id="r-fname" type="text" placeholder="John" autocomplete="given-name"/></div>
+          <div class="form-group"><label class="form-label">Last name</label><input class="form-input" id="r-lname" type="text" placeholder="Doe" autocomplete="family-name"/></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email address</label><input class="form-input" id="r-email" type="email" placeholder="you@example.com" autocomplete="email"/></div>
+        <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="r-pass" type="password" placeholder="Minimum 8 characters" autocomplete="new-password"/></div>
+        <div class="form-group"><label class="form-label">Confirm password</label><input class="form-input" id="r-pass2" type="password" placeholder="Repeat password"/>
+          <div class="form-error" id="reg-error1">Passwords do not match.</div>
+        </div>
+        <button class="auth-btn" onclick="regNext1()">Continue →</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="btn-google" onclick="doGoogleLogin()">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Sign up with Google
+        </button>
+      </div>
+
+      <!-- Step 2 -->
+      <div id="reg-step2" style="display:none">
+        <h2 class="auth-title">Personal details</h2>
+        <p class="auth-sub">Step 2 of 3 — Required for KYC compliance</p>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Date of birth</label><input class="form-input" id="r-dob" type="date"/></div>
+          <div class="form-group"><label class="form-label">Nationality</label>
+            <select class="form-select" id="r-nat"><option value="">Select</option><option>Indian</option><option>American</option><option>British</option><option>Canadian</option><option>Australian</option><option>Other</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Mobile number</label><input class="form-input" id="r-phone" type="tel" placeholder="+91 9876543210" autocomplete="tel"/></div>
+        <div class="form-group"><label class="form-label">Residential address</label><input class="form-input" id="r-addr" type="text" placeholder="Street, City, Country" autocomplete="street-address"/></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">ID type</label>
+            <select class="form-select" id="r-idtype"><option>Passport</option><option>Aadhaar</option><option>Driver's License</option><option>National ID</option></select>
+          </div>
+          <div class="form-group"><label class="form-label">ID number</label><input class="form-input" id="r-idnum" type="text" placeholder="A1234567"/></div>
+        </div>
+        <div class="form-error" id="reg-error2">Please fill all required fields.</div>
+        <div class="btn-pair">
+          <button class="btn btn-ghost" onclick="regBack(1)">← Back</button>
+          <button class="auth-btn" style="margin-top:0;flex:2" onclick="regNext2()">Continue →</button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div id="reg-step3" style="display:none">
+        <h2 class="auth-title">Account setup</h2>
+        <p class="auth-sub">Step 3 of 3 — Transfer preferences</p>
+        <div class="form-group"><label class="form-label">Account type</label>
+          <select class="form-select" id="r-acctype"><option>Personal</option><option>Business / SME</option><option>Freelancer</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Primary send currency</label>
+          <select class="form-select" id="r-sendcur"><option>USD — US Dollar</option><option>GBP — British Pound</option><option>EUR — Euro</option><option>CAD — Canadian Dollar</option><option>AUD — Australian Dollar</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Primary receive currency</label>
+          <select class="form-select" id="r-recvcur"><option>INR — Indian Rupee</option><option>USD — US Dollar</option><option>BDT — Bangladeshi Taka</option><option>PKR — Pakistani Rupee</option><option>PHP — Philippine Peso</option></select>
+        </div>
+        <div class="terms-box">
+          By creating an account you agree to GrayCON's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. KYC verification will be required before your first transfer.
+        </div>
+        <div class="btn-pair">
+          <button class="btn btn-ghost" onclick="regBack(2)">← Back</button>
+          <button class="auth-btn" style="margin-top:0;flex:2" onclick="doRegister()">Create Account ✓</button>
+        </div>
+      </div>
+
+      <p class="auth-switch" style="margin-top:20px">Already have an account? <a onclick="showPage('login')">Sign in</a></p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     DASHBOARD PAGE
+════════════════════════════════════════ -->
+<div id="page-dashboard" class="page">
+  <div class="dash-wrap">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo" onclick="showPage('landing')">
+        <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <span class="logo-text">GrayCON</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-item active" onclick="switchTab('home')">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </div>
+        <div class="nav-item" onclick="switchTab('send')">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Send Funds
+        </div>
+        <div class="nav-item" onclick="switchTab('history')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          History
+        </div>
+        <div class="nav-item" onclick="switchTab('track')">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Track Transfer
+        </div>
+        <div class="nav-item" onclick="switchTab('deposit')">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Deposit
+        </div>
+        <div class="nav-item" onclick="switchTab('kyc')">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          KYC Status
+        </div>
+        <div class="nav-item" onclick="switchTab('settings')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <div class="user-avatar" id="sb-avatar">?</div>
+          <div class="user-info">
+            <div class="user-name" id="sb-name">Loading...</div>
+            <div class="user-role" id="sb-role">Personal</div>
+          </div>
+        </div>
+        <button class="btn btn-danger" style="width:100%;margin-top:12px;justify-content:center" onclick="doSignOut()">Sign out</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+
+      <!-- HOME TAB -->
+      <div id="tab-home">
+        <div class="dash-topbar">
+          <h2>Dashboard</h2>
+          <div class="topbar-right">
+            <div class="network-badge">● Mainnet</div>
+            <div class="user-avatar" id="top-avatar">?</div>
+          </div>
+        </div>
+        <div class="dash-content">
+          <div class="alert-banner">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span style="flex:1">Complete KYC verification to unlock full transfer limits</span>
+            <div class="kyc-bar"><div class="kyc-progress"><div class="kyc-fill"></div></div><span class="kyc-pct">40%</span></div>
+            <button class="btn btn-ghost" style="padding:5px 12px;font-size:12px" onclick="switchTab('kyc')">Complete →</button>
+          </div>
+          <div class="metric-row">
+            <div class="metric-card">
+              <div class="metric-label">Total balance</div>
+              <div class="metric-value">$0.00</div>
+              <div class="metric-sub">Ready to send</div>
+              <div class="metric-badge badge-neutral">Funded</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Sent this month</div>
+              <div class="metric-value" id="m-sent-val">$850</div>
+              <div class="metric-sub" id="m-sent-sub">3 transfers</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Avg. fee paid</div>
+              <div class="metric-value">&lt;1%</div>
+              <div class="metric-sub">vs ~6% industry avg</div>
+              <div class="metric-badge badge-neutral">Saving</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">KYC status</div>
+              <div class="metric-value" style="font-size:16px">Pending</div>
+              <div class="metric-sub">Upload docs to proceed</div>
+              <div class="metric-badge badge-warn">In review</div>
+            </div>
+          </div>
+          <div class="quick-actions">
+            <div class="quick-btn" onclick="switchTab('send')">
+              <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Send money</span>
+            </div>
+            <div class="quick-btn" onclick="switchTab('history')">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>View history</span>
+            </div>
+            <div class="quick-btn" onclick="switchTab('track')">
+              <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Track transfer</span>
+            </div>
+            <div class="quick-btn" onclick="switchTab('deposit')">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span>Deposit funds</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Recent transactions <span onclick="switchTab('history')">View all →</span></div>
+            <div id="tx-list"><div class="empty-state">No transactions yet. Send your first transfer!</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEND TAB -->
+      <div id="tab-send" style="display:none">
+        <div class="dash-topbar"><h2>Send Funds</h2><div class="network-badge">USDT via ERC-20</div></div>
+        <div class="dash-content">
+          <div class="dash-grid">
+            <div class="card">
+              <div class="card-title">Transfer details</div>
+              <div class="send-form">
+                <div class="form-group">
+                  <label class="form-label">Recipient wallet / UPI / bank</label>
+                  <input class="form-input" id="s-recipient" type="text" placeholder="0x... wallet address or UPI ID"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Recipient name</label>
+                  <input class="form-input" id="s-rname" type="text" placeholder="Full name of recipient"/>
+                </div>
+                <div class="currency-row">
+                  <div class="form-group" style="margin:0">
+                    <label class="form-label">You send</label>
+                    <div style="display:flex;gap:6px">
+                      <input class="form-input" id="s-amount" type="number" placeholder="0.00" style="flex:1" oninput="calcRate()"/>
+                      <select class="form-select" id="s-fromcur" style="width:90px" onchange="calcRate()">
+                        <option>USD</option><option>GBP</option><option>EUR</option><option>CAD</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="currency-swap" onclick="calcRate()">
+                    <svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                  </div>
+                  <div class="form-group" style="margin:0">
+                    <label class="form-label">They receive</label>
+                    <div style="display:flex;gap:6px">
+                      <input class="form-input" id="s-receive" type="number" placeholder="0.00" style="flex:1" readonly/>
+                      <select class="form-select" id="s-tocur" style="width:90px" onchange="calcRate()">
+                        <option>INR</option><option>USD</option><option>BDT</option><option>PHP</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="rate-bar">
+                  <span>Live rate</span><span id="rate-val">Enter amount to see rate</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Transfer speed</label>
+                  <select class="form-select" id="s-speed">
+                    <option value="standard">Standard (~15 min) — 0.8% fee</option>
+                    <option value="fast">Fast (~5 min) — 1.2% fee</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Note (optional)</label>
+                  <input class="form-input" id="s-note" type="text" placeholder="Purpose of transfer"/>
+                </div>
+                <div class="rate-bar" id="fee-bar" style="display:none">
+                  <span>Network fee</span><span id="fee-val"></span>
+                </div>
+                <button class="send-btn-full" onclick="openConfirmModal()">Review &amp; Send →</button>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div class="card">
+                <div class="card-title">Transfer route</div>
+                <div class="route-pipeline">
+                  <div class="route-step"><div class="route-dot" style="background:#aaa"></div><div><div class="route-label">Fiat deposit</div><div class="route-sub">Bank / Card → GrayCON wallet</div></div></div>
+                  <div class="route-line"></div>
+                  <div class="route-step"><div class="route-dot" style="background:#888"></div><div><div class="route-label">On-ramp (MoonPay)</div><div class="route-sub">Fiat → USDT stablecoin</div></div></div>
+                  <div class="route-line"></div>
+                  <div class="route-step"><div class="route-dot" style="background:#999"></div><div><div class="route-label">Blockchain network</div><div class="route-sub">ERC-20 / TRC-20 transfer</div></div></div>
+                  <div class="route-line"></div>
+                  <div class="route-step"><div class="route-dot" style="background:#ccc"></div><div><div class="route-label">Off-ramp (Unocoin)</div><div class="route-sub">USDT → INR via UPI / bank</div></div></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">Saved recipients</div>
+                <div class="empty-state">Completed transfers will appear here.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY TAB -->
+      <div id="tab-history" style="display:none">
+        <div class="dash-topbar"><h2>Transaction History</h2></div>
+        <div class="dash-content">
+          <div class="card">
+            <div class="card-title">All transfers</div>
+            <div id="history-list"><div class="empty-state">No transactions yet. Your transfers will appear here with full blockchain trace.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRACK TAB -->
+      <div id="tab-track" style="display:none">
+        <div class="dash-topbar"><h2>Track Transfer</h2><div class="network-badge">Live status</div></div>
+        <div class="dash-content">
+          <div style="max-width:640px">
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title">Enter transaction hash</div>
+              <div style="display:flex;gap:10px">
+                <input class="form-input" id="track-input" type="text" placeholder="0x3f8a91c4... or TX ID" style="flex:1"/>
+                <button class="send-btn-full" style="width:auto;padding:11px 20px;white-space:nowrap" onclick="runTracker()">Track →</button>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap" id="track-chips"></div>
+            </div>
+            <div class="card" id="track-result" style="display:none">
+              <div class="card-title">Pipeline status <span id="track-status-pill" class="pill"></span></div>
+              <div class="track-hash" id="track-hash-display"></div>
+              <div id="pipeline-steps"></div>
+              <div class="track-details">
+                <div class="detail-row"><span class="detail-key">Amount sent</span><span id="trk-amt" class="detail-val">—</span></div>
+                <div class="detail-row"><span class="detail-key">Recipient receives</span><span id="trk-recv" class="detail-val">—</span></div>
+                <div class="detail-row"><span class="detail-key">Fee paid</span><span id="trk-fee" class="detail-val">—</span></div>
+                <div class="detail-row"><span class="detail-key">Network</span><span class="detail-val">ERC-20 / USDT</span></div>
+              </div>
+            </div>
+            <div class="card track-empty" id="track-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.2" style="width:40px;height:40px;margin:0 auto 14px;display:block"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <div style="font-size:14px;font-weight:500;margin-bottom:6px">Track any transfer</div>
+              <div style="font-size:13px;color:#666">Enter a tx hash or click a recent transfer to see live pipeline status.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEPOSIT TAB -->
+      <div id="tab-deposit" style="display:none">
+        <div class="dash-topbar"><h2>Deposit Funds</h2><div class="network-badge">Fiat on-ramp</div></div>
+        <div class="dash-content">
+          <div class="info-banner" style="margin-bottom:20px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" style="width:15px;height:15px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            MoonPay on-ramp integration will be active in Phase 2. The UI below reflects the final deposit experience.
+          </div>
+          <div class="deposit-grid">
+            <div class="card">
+              <div class="card-title">Deposit method</div>
+              <div class="method-list">
+                <div class="method-item"><div class="method-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><div><div class="method-name">Debit / Credit card</div><div class="method-sub">Visa, Mastercard · Instant · 1.5% fee</div></div></div>
+                <div class="method-item"><div class="method-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div><div><div class="method-name">Bank transfer (ACH / SEPA)</div><div class="method-sub">1–3 business days · 0.5% fee</div></div></div>
+                <div class="method-item"><div class="method-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg></div><div><div class="method-name">Crypto deposit (USDT)</div><div class="method-sub">Direct wallet transfer · Instant · 0% fee</div></div></div>
+              </div>
+              <div style="margin-top:16px">
+                <label class="form-label">Deposit amount (USD)</label>
+                <div style="display:flex;gap:8px;margin-top:6px">
+                  <input class="form-input" type="number" placeholder="100.00" style="flex:1"/>
+                  <button class="send-btn-full" style="width:auto;padding:11px 18px">Deposit →</button>
+                </div>
+                <div class="quick-amounts">
+                  <button class="quick-amt">$50</button>
+                  <button class="quick-amt">$100</button>
+                  <button class="quick-amt">$250</button>
+                  <button class="quick-amt">$500</button>
+                  <button class="quick-amt">$1,000</button>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Your USDT deposit address</div>
+              <div class="qr-container">
+                <div class="qr-grid" id="qr-grid"></div>
+                <div class="qr-network">ERC-20 network only</div>
+              </div>
+              <div style="margin-top:14px">
+                <label class="form-label">Wallet address</label>
+                <div class="addr-box" onclick="copyWalletAddr(this)">
+                  <span id="wallet-addr">0x7F3a91C4dB88e2f0045A19cB3D11e7A8B2c63F91</span>
+                  <button class="copy-btn">Copy</button>
+                </div>
+                <p class="addr-warning">Only send USDT (ERC-20) to this address. Sending other tokens may result in permanent loss.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KYC TAB -->
+      <div id="tab-kyc" style="display:none">
+        <div class="dash-topbar"><h2>KYC Verification</h2></div>
+        <div class="dash-content">
+          <div style="max-width:580px">
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title">Verification progress</div>
+              <div class="kyc-steps">
+                <div class="kyc-step done"><div class="kyc-circle done">✓</div><div class="kyc-body"><div class="kyc-step-title">Email verified</div><div class="kyc-step-sub">Completed at registration</div></div><span class="pill pill-recv">Done</span></div>
+                <div class="kyc-step pending"><div class="kyc-circle pending">2</div><div class="kyc-body"><div class="kyc-step-title">Government ID upload</div><div class="kyc-step-sub">Passport, Aadhaar, or Driver's License</div></div><span class="pill pill-pend">Pending</span></div>
+                <div class="kyc-step locked"><div class="kyc-circle locked">3</div><div class="kyc-body"><div class="kyc-step-title">Proof of address</div><div class="kyc-step-sub">Utility bill or bank statement (last 3 months)</div></div><span class="pill pill-lock">Locked</span></div>
+                <div class="kyc-step locked"><div class="kyc-circle locked">4</div><div class="kyc-body"><div class="kyc-step-title">Selfie verification</div><div class="kyc-step-sub">Live photo match with government ID</div></div><span class="pill pill-lock">Locked</span></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Upload document</div>
+              <div class="upload-zone" onclick="this.querySelector('input').click()">
+                <input type="file" accept=".png,.jpg,.jpeg,.pdf" style="display:none" onchange="handleUpload(this)"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5" style="width:32px;height:32px;margin:0 auto 10px;display:block"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <div class="upload-label">Click to upload or drag &amp; drop</div>
+                <div class="upload-sub">PNG, JPG, PDF — max 10MB</div>
+              </div>
+              <button class="send-btn-full" style="margin-top:14px">Submit for review</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS TAB -->
+      <div id="tab-settings" style="display:none">
+        <div class="dash-topbar"><h2>Settings</h2></div>
+        <div class="dash-content">
+          <div style="max-width:500px;display:flex;flex-direction:column;gap:14px">
+            <div class="card">
+              <div class="card-title">Account information</div>
+              <div class="form-group"><label class="form-label">Full name</label><input class="form-input" id="set-name" type="text"/></div>
+              <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="set-email" type="email" readonly style="opacity:.55"/></div>
+              <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="set-phone" type="tel"/></div>
+              <button class="send-btn-full" onclick="saveSettings()">Save changes</button>
+            </div>
+            <div class="card">
+              <div class="card-title">Security</div>
+              <div class="form-group"><label class="form-label">Current password</label><input class="form-input" type="password" placeholder="••••••••"/></div>
+              <div class="form-group"><label class="form-label">New password</label><input class="form-input" type="password" placeholder="Minimum 8 characters"/></div>
+              <button class="send-btn-full">Update password</button>
+            </div>
+            <div class="card">
+              <div class="card-title" style="color:#cc6666">Danger zone</div>
+              <p style="font-size:13px;color:#666;margin-bottom:14px">Once you deactivate your account, you will lose access to all your data.</p>
+              <button class="btn btn-danger" style="width:100%;justify-content:center">Deactivate account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main><!-- /dash-main -->
+  </div><!-- /dash-wrap -->
+</div><!-- /page-dashboard -->
+
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-box">
+    <div class="modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <h3 class="modal-title">Confirm transfer</h3>
+    <p class="modal-sub">This action cannot be undone. Review carefully before confirming.</p>
+    <div class="modal-details">
+      <div class="detail-row"><span class="detail-key">Amount</span><span class="detail-val" id="m-amount">—</span></div>
+      <div class="detail-row"><span class="detail-key">Recipient receives</span><span class="detail-val" id="m-receive">—</span></div>
+      <div class="detail-row"><span class="detail-key">To</span><span class="detail-val" id="m-to">—</span></div>
+      <div class="detail-row"><span class="detail-key">Network fee</span><span class="detail-val" id="m-fee">—</span></div>
+      <div class="detail-row"><span class="detail-key">Est. arrival</span><span class="detail-val" id="m-eta">~15 min</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-confirm" onclick="confirmSend()">Confirm send →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" style="width:15px;height:15px;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg"></span>
+</div>
+
+<!-- Firebase SDK (v9 compat mode — works on GitHub Pages) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
