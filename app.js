@@ -77,11 +77,11 @@ function getDB() {
 let currentUser = null;
 let transactions = [];
 
-/* Demo seed transactions shown after login */
+/* Demo seed transactions — replaced with real data after Firebase loads */
 const SEED_TRANSACTIONS = [
   {
     id: "TX1710001",
-    name: "Priya Sharma",
+    name: "Transfer X1",
     amount: "250 USD",
     receive: "20,768 INR",
     date: "14 Mar 2026",
@@ -90,7 +90,7 @@ const SEED_TRANSACTIONS = [
   },
   {
     id: "TX1709982",
-    name: "Rahul Krishnan",
+    name: "Transfer X2",
     amount: "500 USD",
     receive: "41,537 INR",
     date: "11 Mar 2026",
@@ -99,7 +99,7 @@ const SEED_TRANSACTIONS = [
   },
   {
     id: "TX1709964",
-    name: "Family Remittance",
+    name: "Transfer X3",
     amount: "100 GBP",
     receive: "10,362 INR",
     date: "7 Mar 2026",
@@ -107,6 +107,7 @@ const SEED_TRANSACTIONS = [
     hash: "0xb1e447d92c5a81003180b"
   }
 ];
+
 
 /* Exchange rates (demo — replace with live API in Phase 2) */
 const RATES = {
@@ -566,10 +567,23 @@ function renderTransactions() {
   }
 
   const makeRow = (tx, full) => {
-    const iconCls  = tx.status === 'Sent' ? 'tx-sent' : tx.status === 'Received' ? 'tx-recv' : 'tx-pend';
-    const pillCls  = tx.status === 'Sent' ? 'pill-sent' : tx.status === 'Received' ? 'pill-recv' : 'pill-pend';
+    const isSent     = tx.status === 'Sent';
+    const isReceived = tx.status === 'Received';
+    const isPending  = tx.status === 'Pending';
+
+    const iconCls  = isSent ? 'tx-sent' : isReceived ? 'tx-recv' : 'tx-pend';
+    const pillCls  = isSent ? 'pill-sent' : isReceived ? 'pill-recv' : 'pill-pend';
     const initials = tx.name.slice(0, 2).toUpperCase();
     const hashPreview = tx.hash ? tx.hash.slice(0, 14) + '…' : '';
+
+    /* Red minus for debit, green plus for credit */
+    const amtColor  = isSent ? '#e05555' : isReceived ? '#4caf50' : 'var(--text2)';
+    const amtPrefix = isSent ? '−' : isReceived ? '+' : '';
+    const amtArrow  = isSent
+      ? `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#e05555" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>`
+      : isReceived
+      ? `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2.5"><line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/></svg>`
+      : '';
 
     return `
       <div class="tx-row" onclick="trackTx('${tx.hash}')">
@@ -577,12 +591,15 @@ function renderTransactions() {
         <div class="tx-info">
           <div class="tx-name">${tx.name}</div>
           <div class="tx-date">${tx.date}${!full ? ' · ' + hashPreview : ''}</div>
-          ${full ? `<div class="tx-date" style="font-family:monospace;margin-top:1px">${tx.hash}</div>` : ''}
+          ${full ? `<div class="tx-date" style="font-family:monospace;margin-top:1px;font-size:10px">${tx.hash}</div>` : ''}
         </div>
-        <div style="text-align:right">
-          <div class="tx-amount">${tx.amount}</div>
-          ${full ? `<div style="font-size:11px;color:var(--text3);margin-top:1px">→ ${tx.receive}</div>` : ''}
-          <div style="margin-top:4px"><span class="pill ${pillCls}">${tx.status}</span></div>
+        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+          <div style="display:flex;align-items:center;gap:4px">
+            ${amtArrow}
+            <div class="tx-amount" style="color:${amtColor};font-weight:600">${amtPrefix}${tx.amount}</div>
+          </div>
+          ${full ? `<div style="font-size:11px;color:var(--text3)">→ ${tx.receive}</div>` : ''}
+          <span class="pill ${pillCls}">${tx.status}</span>
         </div>
       </div>`;
   };
