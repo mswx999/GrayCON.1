@@ -1,0 +1,13 @@
+{
+  "name": "graycon",
+  "version": "1.0.0",
+  "description": "GrayCON - Crypto Fund Transfer Platform",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js && npx serve dist"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
