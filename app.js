@@ -116,7 +116,7 @@ function showPage(page) {
   if (page === 'login' || page === 'register') resetRegSteps();
 }
 
-function scrollTo(selector) {
+function scrollToSection(selector) {
   const el = document.querySelector(selector);
   if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
