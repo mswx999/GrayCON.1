@@ -4,6 +4,10 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GrayCON — Fast. Private. Borderless.</title>
+  <!-- Preconnect to speed up Firebase + fonts -->
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin/>
+  <link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin/>
+  <link rel="preconnect" href="https://securetoken.googleapis.com" crossorigin/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
@@ -843,10 +847,12 @@
 </div>
 
 <!-- Firebase SDK (v9 compat mode — works on GitHub Pages) -->
+<!-- Firebase SDK — loaded async so they don't block page render -->
+<!-- Firebase: load auth immediately, firestore deferred (not needed until after login) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" defer></script>
+<script src="app.js" defer></script>
 
 </body>
 </html>

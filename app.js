@@ -29,20 +29,46 @@ function initFirebase() {
   try {
     firebase.initializeApp(FIREBASE_CONFIG);
     auth           = firebase.auth();
-    db             = firebase.firestore();
     googleProvider = new firebase.auth.GoogleAuthProvider();
     firebaseReady  = true;
 
-    /* Listen for auth state changes */
+    /* Set persistence to LOCAL so user stays logged in —
+       avoids full re-auth on every page visit */
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+
+    /* Only init Firestore lazily when actually needed */
+    /* Listen for auth state — but skip if we're already handling login */
     auth.onAuthStateChanged(user => {
-      if (user) {
-        loadUserFromFirebase(user);
+      if (user && !currentUser) {
+        /* Returning visitor — fast path: show dashboard immediately */
+        currentUser = {
+          name:  user.displayName || user.email.split('@')[0],
+          fname: (user.displayName || user.email.split('@')[0]).split(' ')[0],
+          lname: (user.displayName || '').split(' ').slice(1).join(' ') || '',
+          email: user.email,
+          phone: ''
+        };
+        transactions = [...SEED_TRANSACTIONS];
+        loadDashboard();
+        showPage('dashboard');
+        /* Load full profile silently in background */
+        loadUserProfile(user);
       }
     });
   } catch (e) {
-    console.warn("Firebase init skipped (demo mode):", e.message);
-    /* App works in demo mode without Firebase */
+    console.warn('Firebase init skipped (demo mode):', e.message);
   }
+}
+
+/* Lazy Firestore getter — only creates connection when first needed */
+function getDB() {
+  if (!db && firebaseReady) {
+    db = firebase.firestore();
+    /* Use cache for instant reads on repeat visits */
+    db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+    db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+  }
+  return db;
 }
 
 /* ──────────────────────────────────────────
@@ -154,6 +180,7 @@ async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-pass').value;
   const errEl = document.getElementById('login-error');
+  const btn   = document.getElementById('login-btn');
   errEl.style.display = 'none';
 
   if (!email || !pass) {
@@ -162,22 +189,47 @@ async function doLogin() {
     return;
   }
 
+  /* Show loading state immediately */
+  btn.textContent = 'Signing in...';
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
+
   if (firebaseReady) {
     try {
       const cred = await auth.signInWithEmailAndPassword(email, pass);
-      await loadUserFromFirebase(cred.user);
+
+      /* ── FAST PATH: show dashboard instantly, load DB in background ── */
+      currentUser = {
+        name:  cred.user.displayName || email.split('@')[0],
+        fname: (cred.user.displayName || email.split('@')[0]).split(' ')[0],
+        lname: (cred.user.displayName || '').split(' ').slice(1).join(' ') || '',
+        email: cred.user.email,
+        phone: ''
+      };
+      transactions = [...SEED_TRANSACTIONS];
+      loadDashboard();
       showPage('dashboard');
+
+      /* Load full profile silently after UI is shown */
+      setTimeout(() => loadUserProfile(cred.user), 100);
+
     } catch (err) {
       errEl.textContent = getAuthError(err.code);
       errEl.style.display = 'block';
+      btn.textContent = 'Sign in';
+      btn.disabled = false;
+      btn.style.opacity = '1';
     }
   } else {
-    /* Demo mode — no Firebase */
-    currentUser = { name: email.split('@')[0], fname: email.split('@')[0], lname: '', email, phone: '' };
+    currentUser = { email, name: email.split('@')[0], fname: email.split('@')[0], lname: '', phone: '' };
     transactions = [...SEED_TRANSACTIONS];
     loadDashboard();
     showPage('dashboard');
   }
+
+  btn.textContent = 'Sign in';
+  btn.disabled = false;
+  btn.style.opacity = '1';
 }
 
 async function doGoogleLogin() {
@@ -187,7 +239,7 @@ async function doGoogleLogin() {
   }
   try {
     const result = await auth.signInWithPopup(googleProvider);
-    await loadUserFromFirebase(result.user);
+    setTimeout(() => loadUserProfile(result.user), 100);
     showPage('dashboard');
   } catch (err) {
     showToast('Google sign-in failed: ' + err.message);
@@ -221,7 +273,7 @@ async function doRegister() {
     try {
       const cred = await auth.createUserWithEmailAndPassword(email, pass);
       /* Store user profile in Firestore */
-      await db.collection('users').doc(cred.user.uid).set(userData);
+      await getDB().collection('users').doc(cred.user.uid).set(userData);
       await cred.user.updateProfile({ displayName: userData.name });
       currentUser = userData;
       transactions = [];
@@ -250,30 +302,29 @@ async function doSignOut() {
   showPage('landing');
 }
 
-async function loadUserFromFirebase(firebaseUser) {
-  currentUser = {
-    name:  firebaseUser.displayName || firebaseUser.email.split('@')[0],
-    email: firebaseUser.email,
-    fname: (firebaseUser.displayName || '').split(' ')[0] || firebaseUser.email.split('@')[0],
-    lname: (firebaseUser.displayName || '').split(' ').slice(1).join(' ') || '',
-    phone: firebaseUser.phoneNumber || ''
-  };
-  /* Load from Firestore if available */
-  if (db) {
-    try {
-      const doc = await db.collection('users').doc(firebaseUser.uid).get();
-      if (doc.exists) Object.assign(currentUser, doc.data());
-    } catch (e) { /* offline */ }
-    /* Load transactions */
-    try {
-      const snap = await db.collection('users').doc(firebaseUser.uid)
-                            .collection('transactions').orderBy('createdAt', 'desc').limit(20).get();
+/* Loads full profile silently in background — never blocks UI */
+async function loadUserProfile(firebaseUser) {
+  const database = getDB();
+  if (!database) return;
+  try {
+    const doc = await database.collection('users').doc(firebaseUser.uid).get();
+    if (doc.exists) {
+      Object.assign(currentUser, doc.data());
+      loadDashboard(); /* refresh UI with full data */
+    }
+  } catch (e) { /* offline — use cached data */ }
+
+  /* Load transactions in background */
+  try {
+    const snap = await database.collection('users').doc(firebaseUser.uid)
+                               .collection('transactions')
+                               .orderBy('createdAt', 'desc').limit(20).get();
+    if (!snap.empty) {
       transactions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch (e) { transactions = [...SEED_TRANSACTIONS]; }
-  } else {
-    transactions = [...SEED_TRANSACTIONS];
-  }
-  loadDashboard();
+      renderTransactions();
+      updateMetrics();
+    }
+  } catch (e) { /* use seed transactions */ }
 }
 
 function getAuthError(code) {
@@ -385,7 +436,7 @@ function saveSettings() {
   if (currentUser) { currentUser.name = name; currentUser.phone = phone; }
   /* Persist to Firestore if available */
   if (firebaseReady && auth.currentUser && db) {
-    db.collection('users').doc(auth.currentUser.uid).update({ name, phone })
+    getDB().collection('users').doc(auth.currentUser.uid).update({ name, phone })
       .then(() => showToast('Settings saved.'))
       .catch(() => showToast('Settings saved locally.'));
   } else {
@@ -473,7 +524,7 @@ async function confirmSend() {
   /* Save to Firestore */
   if (firebaseReady && auth.currentUser && db) {
     try {
-      await db.collection('users').doc(auth.currentUser.uid)
+      await getDB().collection('users').doc(auth.currentUser.uid)
                .collection('transactions').doc(tx.id).set(tx);
     } catch (e) { /* offline — save locally */ }
   }
