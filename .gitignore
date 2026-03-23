@@ -1,0 +1,21 @@
+# Environment files — NEVER commit these
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# The .env file (with placeholders) IS committed
+# so teammates know which variables are needed.
+# But .env.local with real keys is NOT committed.
+
+# Build output
+dist/
+.vercel/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
