@@ -8,22 +8,22 @@
 /* ── ROOT TOKENS ── */
 :root {
   /* Backgrounds — dark to lighter */
-  --bg:       #0c0c0c;   /* page base */
-  --bg2:      #141414;   /* card / sidebar */
-  --bg3:      #1c1c1c;   /* input / inner */
-  --bg4:      #242424;   /* hover states */
-  --bg5:      #2e2e2e;   /* active / selected */
+  --bg:       #121212;   /* page base */
+  --bg2:      #1e1e1e;   /* card / sidebar */
+  --bg3:      #2a2a2a;   /* input / inner */
+  --bg4:      #333333;   /* hover states */
+  --bg5:      #3d3d3d;   /* active / selected */
 
   /* Borders */
-  --border:   rgba(255,255,255,0.07);
-  --border2:  rgba(255,255,255,0.13);
-  --border3:  rgba(255,255,255,0.22);
+  --border:   rgba(255,255,255,0.15);
+  --border2:  rgba(255,255,255,0.22);
+  --border3:  rgba(255,255,255,0.35);
 
   /* Text */
-  --text:     #f0f0f0;   /* primary */
-  --text2:    #b8b8b8;   /* secondary */
-  --text3:    #707070;   /* muted */
-  --text4:    #484848;   /* very muted */
+  --text:     #ffffff;   /* primary */
+  --text2:    #e0e0e0;   /* secondary */
+  --text3:    #a0a0a0;   /* muted */
+  --text4:    #828282;   /* very muted */
 
   /* Accents (all gray-scale) */
   --white:    #ffffff;
@@ -131,7 +131,7 @@ img { max-width: 100%; display: block; }
   align-items: center;
   justify-content: space-between;
   padding: 0 5%;
-  background: rgba(12,12,12,0.88);
+  background: rgba(18,18,18,0.88);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
