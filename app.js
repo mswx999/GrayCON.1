@@ -770,9 +770,11 @@ function initNavScroll() {
   if (!nav) return;
   window.addEventListener('scroll', () => {
     if (window.scrollY > 20) {
-      nav.style.background = 'rgba(12,12,12,0.96)';
+      nav.style.background = 'rgba(255,255,255,0.98)';
+      nav.style.boxShadow = '0 1px 0 rgba(0,0,0,0.08)';
     } else {
-      nav.style.background = 'rgba(12,12,12,0.88)';
+      nav.style.background = 'rgba(255,255,255,0.92)';
+      nav.style.boxShadow = 'none';
     }
   }, { passive: true });
 }
