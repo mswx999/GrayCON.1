@@ -770,11 +770,9 @@ function initNavScroll() {
   if (!nav) return;
   window.addEventListener('scroll', () => {
     if (window.scrollY > 20) {
-      nav.style.background = 'rgba(255,255,255,0.98)';
-      nav.style.boxShadow = '0 1px 0 rgba(0,0,0,0.08)';
+      nav.classList.add('scrolled');
     } else {
-      nav.style.background = 'rgba(255,255,255,0.92)';
-      nav.style.boxShadow = 'none';
+      nav.classList.remove('scrolled');
     }
   }, { passive: true });
 }
@@ -854,9 +852,26 @@ function animateCounter(el) {
       if (target >= 1000000) el.textContent = (target / 1000000).toFixed(1) + 'M';
       else if (target >= 1000) el.textContent = (target / 1000).toFixed(0) + 'K';
       else el.textContent = target;
+      /* Start live micro-updates every 3-8s */
+      startLiveUpdates(el, target);
     }
   }
   requestAnimationFrame(update);
+}
+
+function startLiveUpdates(el, base) {
+  let current = base;
+  setInterval(() => {
+    const increment = base >= 1000000 ? Math.floor(Math.random() * 5000) + 1000
+                    : base >= 1000 ? Math.floor(Math.random() * 3) + 1
+                    : 0;
+    if (increment === 0) return;
+    current += increment;
+    el.dataset.target = current;
+    if (current >= 1000000) el.textContent = (current / 1000000).toFixed(1) + 'M';
+    else if (current >= 1000) el.textContent = (current / 1000).toFixed(0) + 'K';
+    else el.textContent = current;
+  }, Math.random() * 5000 + 3000);
 }
 
 
@@ -888,7 +903,7 @@ function routeAfterLogin() {
 /* ══════════════════════════════════════════
    ADMIN DASHBOARD LOGIC
 ══════════════════════════════════════════ */
-const ADMIN_TAB_INDEX = { overview: 0, users: 1, txns: 2, 'kyc-admin': 3 };
+const ADMIN_TAB_INDEX = { overview: 0, users: 1, txns: 2, 'kyc-admin': 3, 'admin-settings': 4 };
 
 function switchAdminTab(tab) {
   document.querySelectorAll('[id^="admin-tab-"]').forEach(t => t.style.display = 'none');
@@ -902,6 +917,7 @@ function switchAdminTab(tab) {
 
   if (tab === 'users') renderAdminUsers();
   if (tab === 'txns') renderAdminTransactions();
+  if (tab === 'kyc-admin') renderAdminKYC();
 }
 
 /* Demo admin data */
@@ -935,7 +951,7 @@ function renderAdminUsers(filter) {
 
   tbody.innerHTML = users.map(u => {
     const kycCls = u.kyc === 'Verified' ? 'pill-recv' : u.kyc === 'Pending' ? 'pill-pend' : 'pill-sent';
-    return `<tr><td><strong>${u.name}</strong></td><td>${u.email}</td><td><span class="pill ${kycCls}">${u.kyc}</span></td><td>${u.balance}</td><td>${u.txns}</td><td>${u.joined}</td></tr>`;
+    return `<tr><td><strong>${u.name}</strong></td><td>${u.email}</td><td><span class="pill ${kycCls}">${u.kyc}</span></td><td>${u.balance}</td><td>${u.txns}</td><td>${u.joined}</td><td><button class="btn btn-ghost" style="padding:3px 8px;font-size:10px" onclick="showToast('User ${u.name} details opened')">View</button></td></tr>`;
   }).join('');
 }
 
@@ -951,6 +967,25 @@ function renderAdminTransactions() {
     const sCls = tx.status === 'Delivered' ? 'pill-recv' : tx.status === 'Pending' ? 'pill-pend' : tx.status === 'Processing' ? 'pill-pend' : 'pill-sent';
     return `<tr><td style="font-family:monospace;font-size:11px">${tx.id}</td><td>${tx.user}</td><td>${tx.amount}</td><td>${tx.recv}</td><td><span class="pill ${sCls}">${tx.status}</span></td><td>${tx.date}</td></tr>`;
   }).join('');
+}
+
+function renderAdminKYC() {
+  const el = document.getElementById('admin-kyc-list');
+  if (!el) return;
+  const pending = DEMO_USERS.filter(u => u.kyc === 'Pending');
+  if (!pending.length) { el.innerHTML = '<div class="empty-state">No pending KYC applications.</div>'; return; }
+  el.innerHTML = pending.map(u => `
+    <div class="tx-row" style="justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="tx-icon tx-pend">${u.name.slice(0,2).toUpperCase()}</div>
+        <div><div class="tx-name">${u.name}</div><div class="tx-date">${u.email}</div></div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;border-color:var(--ok);color:var(--ok)" onclick="showToast('KYC approved for ${u.name}')">Approve</button>
+        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;border-color:var(--danger);color:var(--danger)" onclick="showToast('KYC rejected for ${u.name}')">Reject</button>
+      </div>
+    </div>
+  `).join('');
 }
 
 
