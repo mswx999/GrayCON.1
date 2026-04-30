@@ -836,20 +836,23 @@ function animateCounter(el) {
   function update(now) {
     const elapsed = now - start;
     const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3); /* ease-out cubic */
+    const eased = 1 - Math.pow(1 - progress, 3);
     const current = Math.floor(eased * target);
 
     if (target >= 1000000) {
       el.textContent = (current / 1000000).toFixed(1) + 'M';
     } else if (target >= 1000) {
-      el.textContent = (current / 1000).toFixed(current >= target ? 0 : 1) + 'K';
-      if (progress >= 1) el.textContent = (target / 1000).toFixed(0) + '+';
+      el.textContent = (current / 1000).toFixed(1) + 'K';
     } else {
       el.textContent = current;
     }
 
     if (progress < 1) requestAnimationFrame(update);
-    else if (target >= 1000000) el.textContent = (target / 1000000).toFixed(1) + 'M';
+    else {
+      if (target >= 1000000) el.textContent = (target / 1000000).toFixed(1) + 'M';
+      else if (target >= 1000) el.textContent = (target / 1000).toFixed(0) + 'K';
+      else el.textContent = target;
+    }
   }
   requestAnimationFrame(update);
 }
