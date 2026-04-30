@@ -40,7 +40,6 @@ function initFirebase() {
     /* Listen for auth state — but skip if we're already handling login */
     auth.onAuthStateChanged(user => {
       if (user && !currentUser) {
-        /* Returning visitor — fast path: show dashboard immediately */
         currentUser = {
           name:  user.displayName || user.email.split('@')[0],
           fname: (user.displayName || user.email.split('@')[0]).split(' ')[0],
@@ -49,9 +48,7 @@ function initFirebase() {
           phone: ''
         };
         transactions = [...SEED_TRANSACTIONS];
-        loadDashboard();
-        showPage('dashboard');
-        /* Load full profile silently in background */
+        routeAfterLogin();
         loadUserProfile(user);
       }
     });
@@ -208,8 +205,7 @@ async function doLogin() {
         phone: ''
       };
       transactions = [...SEED_TRANSACTIONS];
-      loadDashboard();
-      showPage('dashboard');
+      routeAfterLogin();
 
       /* Load full profile silently after UI is shown */
       setTimeout(() => loadUserProfile(cred.user), 100);
@@ -224,8 +220,7 @@ async function doLogin() {
   } else {
     currentUser = { email, name: email.split('@')[0], fname: email.split('@')[0], lname: '', phone: '' };
     transactions = [...SEED_TRANSACTIONS];
-    loadDashboard();
-    showPage('dashboard');
+    routeAfterLogin();
   }
 
   btn.textContent = 'Sign in';
@@ -278,8 +273,7 @@ async function doRegister() {
       await cred.user.updateProfile({ displayName: userData.name });
       currentUser = userData;
       transactions = [];
-      loadDashboard();
-      showPage('dashboard');
+      routeAfterLogin();
       showToast('Welcome to GrayCON, ' + fname + '!');
     } catch (err) {
       showToast('Registration failed: ' + err.message);
@@ -288,8 +282,7 @@ async function doRegister() {
     /* Demo mode */
     currentUser = userData;
     transactions = [];
-    loadDashboard();
-    showPage('dashboard');
+    routeAfterLogin();
     showToast('Welcome to GrayCON, ' + fname + '! (Demo mode)');
   }
 }
@@ -429,6 +422,7 @@ function loadDashboard() {
   buildQRCode();
   renderTransactions();
   updateMetrics();
+  updateBalanceDisplay();
 }
 
 function saveSettings() {
@@ -495,6 +489,13 @@ function openConfirmModal() {
 
   if (!amt || !to) { showToast('Please fill in the amount and recipient.'); return; }
 
+  /* Check balance */
+  const sendAmt = parseFloat(amt);
+  if (sendAmt > userBalance) {
+    showToast('Insufficient balance. Your balance is $' + userBalance.toLocaleString());
+    return;
+  }
+
   const fee = (parseFloat(amt) * FEES[speed]).toFixed(4);
   document.getElementById('m-amount').textContent  = `${amt} ${from}`;
   document.getElementById('m-receive').textContent = `${recv} ${toCur}`;
@@ -510,6 +511,9 @@ function closeModal() {
 
 async function confirmSend() {
   closeModal();
+
+  const sendAmt = parseFloat(document.getElementById('s-amount').value) || 0;
+  deductBalance(sendAmt);
 
   const tx = {
     id:      'TX' + Date.now(),
@@ -801,4 +805,183 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal();
   initNavScroll();
   initKeyboard();
+  initCounterAnimation();
 });
+
+
+/* ══════════════════════════════════════════
+   PLATFORM COUNTER ANIMATION
+══════════════════════════════════════════ */
+function initCounterAnimation() {
+  const counters = document.querySelectorAll('[id^="counter-"]');
+  if (!counters.length) return;
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  counters.forEach(el => observer.observe(el));
+}
+
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const duration = 2000;
+  const start = performance.now();
+
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3); /* ease-out cubic */
+    const current = Math.floor(eased * target);
+
+    if (target >= 1000000) {
+      el.textContent = (current / 1000000).toFixed(1) + 'M';
+    } else if (target >= 1000) {
+      el.textContent = (current / 1000).toFixed(current >= target ? 0 : 1) + 'K';
+      if (progress >= 1) el.textContent = (target / 1000).toFixed(0) + '+';
+    } else {
+      el.textContent = current;
+    }
+
+    if (progress < 1) requestAnimationFrame(update);
+    else if (target >= 1000000) el.textContent = (target / 1000000).toFixed(1) + 'M';
+  }
+  requestAnimationFrame(update);
+}
+
+
+/* ══════════════════════════════════════════
+   SUPERADMIN — HARDCODED EMAIL LIST
+══════════════════════════════════════════ */
+const ADMIN_EMAILS = [
+  'admin@graycon.com',
+  'superadmin@graycon.com',
+  'mshivdwivedi@gmail.com'
+];
+
+function isAdmin(email) {
+  return ADMIN_EMAILS.includes((email || '').toLowerCase().trim());
+}
+
+/* Called after login to route admin vs user */
+function routeAfterLogin() {
+  if (isAdmin(currentUser.email)) {
+    loadAdminDashboard();
+    showPage('admin');
+  } else {
+    loadDashboard();
+    showPage('dashboard');
+  }
+}
+
+
+/* ══════════════════════════════════════════
+   ADMIN DASHBOARD LOGIC
+══════════════════════════════════════════ */
+const ADMIN_TAB_INDEX = { overview: 0, users: 1, txns: 2, 'kyc-admin': 3 };
+
+function switchAdminTab(tab) {
+  document.querySelectorAll('[id^="admin-tab-"]').forEach(t => t.style.display = 'none');
+  const el = document.getElementById('admin-tab-' + tab);
+  if (el) el.style.display = 'block';
+
+  const items = document.querySelectorAll('.admin-sidebar .nav-item');
+  items.forEach(n => n.classList.remove('active'));
+  const idx = ADMIN_TAB_INDEX[tab];
+  if (idx !== undefined && items[idx]) items[idx].classList.add('active');
+
+  if (tab === 'users') renderAdminUsers();
+  if (tab === 'txns') renderAdminTransactions();
+}
+
+/* Demo admin data */
+const DEMO_USERS = [
+  { name: 'Rahul Krishnan', email: 'rahul@example.com', kyc: 'Verified', balance: '$4,200', txns: 12, joined: 'Jan 2026' },
+  { name: 'Priya Sharma', email: 'priya@example.com', kyc: 'Pending', balance: '$1,800', txns: 5, joined: 'Feb 2026' },
+  { name: 'Aditya Mehta', email: 'aditya@mehta.com', kyc: 'Verified', balance: '$12,500', txns: 28, joined: 'Dec 2025' },
+  { name: 'Sarah Chen', email: 'sarah@example.com', kyc: 'Rejected', balance: '$0', txns: 0, joined: 'Mar 2026' },
+  { name: 'James Wilson', email: 'james@example.com', kyc: 'Verified', balance: '$6,300', txns: 15, joined: 'Jan 2026' },
+  { name: 'Ananya Patel', email: 'ananya@example.com', kyc: 'Pending', balance: '$900', txns: 3, joined: 'Mar 2026' },
+];
+
+const DEMO_ADMIN_TXNS = [
+  { id: 'TX2001', user: 'Rahul K.', amount: '$500 USD', recv: '₹41,700 INR', status: 'Delivered', date: '28 Apr 2026' },
+  { id: 'TX2002', user: 'Priya S.', amount: '£200 GBP', recv: '₹21,040 INR', status: 'Sent', date: '27 Apr 2026' },
+  { id: 'TX2003', user: 'Aditya M.', amount: '$1,000 USD', recv: '₹83,400 INR', status: 'Processing', date: '26 Apr 2026' },
+  { id: 'TX2004', user: 'James W.', amount: '$250 USD', recv: '₹20,850 INR', status: 'Delivered', date: '25 Apr 2026' },
+  { id: 'TX2005', user: 'Ananya P.', amount: '$100 USD', recv: '₹8,340 INR', status: 'Pending', date: '24 Apr 2026' },
+];
+
+function loadAdminDashboard() {
+  renderAdminUsers();
+  renderAdminTransactions();
+}
+
+function renderAdminUsers(filter) {
+  const tbody = document.getElementById('admin-users-body');
+  if (!tbody) return;
+  const q = (filter || '').toLowerCase();
+  const users = q ? DEMO_USERS.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)) : DEMO_USERS;
+
+  tbody.innerHTML = users.map(u => {
+    const kycCls = u.kyc === 'Verified' ? 'pill-recv' : u.kyc === 'Pending' ? 'pill-pend' : 'pill-sent';
+    return `<tr><td><strong>${u.name}</strong></td><td>${u.email}</td><td><span class="pill ${kycCls}">${u.kyc}</span></td><td>${u.balance}</td><td>${u.txns}</td><td>${u.joined}</td></tr>`;
+  }).join('');
+}
+
+function filterAdminUsers() {
+  const q = document.getElementById('admin-user-search')?.value || '';
+  renderAdminUsers(q);
+}
+
+function renderAdminTransactions() {
+  const tbody = document.getElementById('admin-txns-body');
+  if (!tbody) return;
+  tbody.innerHTML = DEMO_ADMIN_TXNS.map(tx => {
+    const sCls = tx.status === 'Delivered' ? 'pill-recv' : tx.status === 'Pending' ? 'pill-pend' : tx.status === 'Processing' ? 'pill-pend' : 'pill-sent';
+    return `<tr><td style="font-family:monospace;font-size:11px">${tx.id}</td><td>${tx.user}</td><td>${tx.amount}</td><td>${tx.recv}</td><td><span class="pill ${sCls}">${tx.status}</span></td><td>${tx.date}</td></tr>`;
+  }).join('');
+}
+
+
+/* ══════════════════════════════════════════
+   WALLET BALANCE SYSTEM
+══════════════════════════════════════════ */
+let userBalance = 10000; /* Default demo balance */
+
+function updateBalanceDisplay() {
+  const el = document.getElementById('dash-balance');
+  if (el) el.textContent = '$' + userBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function deductBalance(amount) {
+  userBalance = Math.max(0, userBalance - amount);
+  updateBalanceDisplay();
+}
+
+
+/* ══════════════════════════════════════════
+   MOBILE BOTTOM NAV HELPER
+══════════════════════════════════════════ */
+function updateMobNav(btn) {
+  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+
+/* ══════════════════════════════════════════
+   SHOW/HIDE MOBILE BOTTOM NAV
+══════════════════════════════════════════ */
+const origShowPage = showPage;
+showPage = function(page) {
+  origShowPage(page);
+  const mobNav = document.getElementById('mobile-bottom-nav');
+  if (mobNav) {
+    mobNav.style.display = (page === 'dashboard') ? '' : 'none';
+  }
+};
