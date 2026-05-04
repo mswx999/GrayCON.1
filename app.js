@@ -106,6 +106,32 @@ const SEED_TRANSACTIONS = [
 ];
 
 
+/* ── Firestore Helpers — seed & persist ────────────── */
+async function seedTransactionsToFirestore(uid) {
+  const database = getDB();
+  if (!database) return;
+  const batch = database.batch();
+  SEED_TRANSACTIONS.forEach(tx => {
+    const ref = database.collection('users').doc(uid)
+                  .collection('transactions').doc(tx.id);
+    batch.set(ref, { ...tx, createdAt: tx.createdAt || new Date().toISOString() });
+  });
+  try {
+    await batch.commit();
+    console.log('Seed transactions written to Firestore');
+  } catch (e) { console.warn('Seed write failed:', e.message); }
+}
+
+async function saveBalanceToFirestore() {
+  if (firebaseReady && auth.currentUser) {
+    try {
+      await getDB().collection('users').doc(auth.currentUser.uid)
+               .update({ balance: userBalance });
+    } catch (e) { /* offline — will sync when back online */ }
+  }
+}
+
+
 /* Exchange rates (demo — replace with live API in Phase 2) */
 const RATES = {
   USD: { INR: 83.4,  USD: 1,    BDT: 110,  PHP: 56  },
@@ -262,6 +288,7 @@ async function doRegister() {
     idNum:       document.getElementById('r-idnum').value,
     acctype, sendcur, recvcur,
     kycStatus: 'pending',
+    balance: 10000,
     createdAt: new Date().toISOString()
   };
 
@@ -271,8 +298,11 @@ async function doRegister() {
       /* Store user profile in Firestore */
       await getDB().collection('users').doc(cred.user.uid).set(userData);
       await cred.user.updateProfile({ displayName: userData.name });
+      /* Seed Firestore with starter transactions */
+      seedTransactionsToFirestore(cred.user.uid);
       currentUser = userData;
-      transactions = [];
+      userBalance = 10000;
+      transactions = [...SEED_TRANSACTIONS];
       routeAfterLogin();
       showToast('Welcome to GrayCON, ' + fname + '!');
     } catch (err) {
@@ -281,7 +311,8 @@ async function doRegister() {
   } else {
     /* Demo mode */
     currentUser = userData;
-    transactions = [];
+    userBalance = 10000;
+    transactions = [...SEED_TRANSACTIONS];
     routeAfterLogin();
     showToast('Welcome to GrayCON, ' + fname + '! (Demo mode)');
   }
@@ -303,22 +334,32 @@ async function loadUserProfile(firebaseUser) {
   try {
     const doc = await database.collection('users').doc(firebaseUser.uid).get();
     if (doc.exists) {
-      Object.assign(currentUser, doc.data());
+      const data = doc.data();
+      Object.assign(currentUser, data);
+      /* Restore persisted balance */
+      if (typeof data.balance === 'number') {
+        userBalance = data.balance;
+        updateBalanceDisplay();
+      }
       loadDashboard(); /* refresh UI with full data */
     }
   } catch (e) { /* offline — use cached data */ }
 
-  /* Load transactions in background */
+  /* Load transactions from Firestore */
   try {
     const snap = await database.collection('users').doc(firebaseUser.uid)
                                .collection('transactions')
                                .orderBy('createdAt', 'desc').limit(20).get();
     if (!snap.empty) {
       transactions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderTransactions();
-      updateMetrics();
+    } else {
+      /* First-time or migrating user — seed Firestore with demo data */
+      seedTransactionsToFirestore(firebaseUser.uid);
+      transactions = [...SEED_TRANSACTIONS];
     }
-  } catch (e) { /* use seed transactions */ }
+    renderTransactions();
+    updateMetrics();
+  } catch (e) { /* use seed transactions already in memory */ }
 }
 
 function getAuthError(code) {
@@ -938,7 +979,54 @@ const DEMO_ADMIN_TXNS = [
   { id: 'TX2005', user: 'Ananya P.', amount: '$100 USD', recv: '₹8,340 INR', status: 'Pending', date: '24 Apr 2026' },
 ];
 
-function loadAdminDashboard() {
+/* Live admin data — populated from Firestore, fallback to demo */
+let liveAdminUsers = null;
+let liveAdminTxns  = null;
+
+async function loadAdminDashboard() {
+  /* Try fetching real data from Firestore */
+  if (firebaseReady) {
+    const database = getDB();
+    if (database) {
+      try {
+        const usersSnap = await database.collection('users').get();
+        if (!usersSnap.empty) {
+          liveAdminUsers = usersSnap.docs.map(doc => {
+            const d = doc.data();
+            return {
+              name:    d.name || ((d.fname || '') + ' ' + (d.lname || '')).trim(),
+              email:   d.email || '—',
+              kyc:     d.kycStatus === 'verified' ? 'Verified'
+                     : d.kycStatus === 'rejected' ? 'Rejected' : 'Pending',
+              balance: '$' + (d.balance || 0).toLocaleString(),
+              txns:    0,
+              joined:  d.createdAt
+                       ? new Date(d.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+                       : '—'
+            };
+          });
+        }
+      } catch (e) { console.warn('Admin users fetch:', e.message); }
+
+      try {
+        const txSnap = await database.collectionGroup('transactions')
+                                     .orderBy('createdAt', 'desc').limit(50).get();
+        if (!txSnap.empty) {
+          liveAdminTxns = txSnap.docs.map(doc => {
+            const d = doc.data();
+            return {
+              id:     d.id || doc.id,
+              user:   d.name || '—',
+              amount: d.amount || '—',
+              recv:   d.receive || '—',
+              status: d.status || 'Pending',
+              date:   d.date || '—'
+            };
+          });
+        }
+      } catch (e) { console.warn('Admin txns fetch (index may be needed):', e.message); }
+    }
+  }
   renderAdminUsers();
   renderAdminTransactions();
 }
@@ -946,8 +1034,9 @@ function loadAdminDashboard() {
 function renderAdminUsers(filter) {
   const tbody = document.getElementById('admin-users-body');
   if (!tbody) return;
+  const source = liveAdminUsers || DEMO_USERS;
   const q = (filter || '').toLowerCase();
-  const users = q ? DEMO_USERS.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)) : DEMO_USERS;
+  const users = q ? source.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)) : source;
 
   tbody.innerHTML = users.map(u => {
     const kycCls = u.kyc === 'Verified' ? 'pill-recv' : u.kyc === 'Pending' ? 'pill-pend' : 'pill-sent';
@@ -963,8 +1052,10 @@ function filterAdminUsers() {
 function renderAdminTransactions() {
   const tbody = document.getElementById('admin-txns-body');
   if (!tbody) return;
-  tbody.innerHTML = DEMO_ADMIN_TXNS.map(tx => {
-    const sCls = tx.status === 'Delivered' ? 'pill-recv' : tx.status === 'Pending' ? 'pill-pend' : tx.status === 'Processing' ? 'pill-pend' : 'pill-sent';
+  const source = liveAdminTxns || DEMO_ADMIN_TXNS;
+  tbody.innerHTML = source.map(tx => {
+    const sCls = tx.status === 'Delivered' ? 'pill-recv' : tx.status === 'Sent' ? 'pill-sent'
+               : tx.status === 'Pending' ? 'pill-pend' : tx.status === 'Processing' ? 'pill-pend' : 'pill-recv';
     return `<tr><td style="font-family:monospace;font-size:11px">${tx.id}</td><td>${tx.user}</td><td>${tx.amount}</td><td>${tx.recv}</td><td><span class="pill ${sCls}">${tx.status}</span></td><td>${tx.date}</td></tr>`;
   }).join('');
 }
@@ -1002,6 +1093,7 @@ function updateBalanceDisplay() {
 function deductBalance(amount) {
   userBalance = Math.max(0, userBalance - amount);
   updateBalanceDisplay();
+  saveBalanceToFirestore();
 }
 
 
