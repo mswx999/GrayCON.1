@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── User profiles ───────────────────────────
+    // Users can read/write only their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // ─── Transactions sub-collection ───────────
+      // Users can read/write only their own transactions
+      match /transactions/{txId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // ─── Admin: read all users & transactions ────
+    // SuperAdmins can read any user document and any transaction
+    // Add your admin UIDs below after creating admin accounts
+    match /users/{userId} {
+      allow read: if request.auth != null && 
+        request.auth.token.email in [
+          'admin@graycon.com',
+          'superadmin@graycon.com',
+          'mshivdwivedi@gmail.com'
+        ];
+
+      match /transactions/{txId} {
+        allow read: if request.auth != null &&
+          request.auth.token.email in [
+            'admin@graycon.com',
+            'superadmin@graycon.com',
+            'mshivdwivedi@gmail.com'
+          ];
+      }
+    }
+  }
+}
