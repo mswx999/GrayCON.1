@@ -1008,23 +1008,31 @@ async function loadAdminDashboard() {
         }
       } catch (e) { console.warn('Admin users fetch:', e.message); }
 
+      /* Fetch transactions per user — no collection group index needed */
       try {
-        const txSnap = await database.collectionGroup('transactions')
-                                     .orderBy('createdAt', 'desc').limit(50).get();
-        if (!txSnap.empty) {
-          liveAdminTxns = txSnap.docs.map(doc => {
+        const allTxns = [];
+        const usersSnap2 = await database.collection('users').get();
+        for (const userDoc of usersSnap2.docs) {
+          const txSnap = await userDoc.ref.collection('transactions')
+                                      .orderBy('createdAt', 'desc').limit(10).get();
+          const userName = (userDoc.data().name || userDoc.data().fname || '—').split(' ')[0];
+          txSnap.docs.forEach(doc => {
             const d = doc.data();
-            return {
+            allTxns.push({
               id:     d.id || doc.id,
-              user:   d.name || '—',
+              user:   d.name || userName,
               amount: d.amount || '—',
               recv:   d.receive || '—',
               status: d.status || 'Pending',
-              date:   d.date || '—'
-            };
+              date:   d.date || '—',
+              _ts:    d.createdAt || ''
+            });
           });
         }
-      } catch (e) { console.warn('Admin txns fetch (index may be needed):', e.message); }
+        /* Sort all combined transactions by date descending */
+        allTxns.sort((a, b) => (b._ts || '').localeCompare(a._ts || ''));
+        if (allTxns.length) liveAdminTxns = allTxns.slice(0, 50);
+      } catch (e) { console.warn('Admin txns fetch:', e.message); }
     }
   }
   renderAdminUsers();
